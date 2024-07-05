@@ -1,0 +1,68 @@
+version: '3'
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.13.4-alpine
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    env_file:
+      - .env
+    networks:
+      - app
+      
+  auth_postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: qwe
+      POSTGRES_USER: postgres
+      POSTGRES_DB: zadanie21_docker
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdataAuth:/var/lib/postgresql/data
+    networks:
+      - app
+    container_name: auth_postgres
+
+  api_gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - 3000:3000
+    container_name: api_gateway
+    depends_on:
+      - rabbitmq
+    networks:
+      - app
+    command: npm run start
+
+  auth:
+    build:
+      context: ./auth
+    ports:
+      - 3001:3001
+    container_name: auth
+    depends_on:
+      - auth_postgres
+      - rabbitmq
+      - api_gateway
+    restart: always
+    networks:
+      - app
+    command: npm run start
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  
+volumes:
+  pgdataAuth:
+networks:
+  app:
