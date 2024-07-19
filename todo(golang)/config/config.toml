@@ -1,0 +1,6 @@
+port = ":3000"
+database_url = "user=postgres password=qwe host=localhost dbname=db_golang sslmode=disable"
+
+RABBITMQ_URL = "amqp://guest:guest@localhost:5672"
+
+RABBITMQ_TODO_QUEUE = "todo_queue"

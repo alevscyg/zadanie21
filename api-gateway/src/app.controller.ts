@@ -1,14 +1,16 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserDto } from './dto/user-dto';
 import { RoleDto } from './dto/role-dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthDtoResponse } from './dto/auth-dto-response';
+import { toDo } from './dto/toDo-dto';
 
 @Controller("toDoList")
 export class AppController {
   constructor(
-    @Inject('RABBITMQ_AUTH_SERVICE') private rabbitAuthService: ClientProxy
+    @Inject('RABBITMQ_AUTH_SERVICE') private rabbitAuthService: ClientProxy,
+    @Inject('RABBITMQ_TODO_SERVICE') private rabbitToDoService: ClientProxy
   ) {}
 
   /// Авторизация ///////////////////////////////
@@ -70,6 +72,25 @@ export class AppController {
   @Delete("role/:value")
   async removeRole(@Param('value') value: string,){
     return this.rabbitAuthService.send('removeRole', { value });
+  }
+
+  /// ToDo ///////////////////////////////
+
+  @UsePipes(ValidationPipe)
+  @ApiOperation({summary: 'Создание ToDo'})
+  @ApiResponse({status: 200, type: toDo})
+  @Post("todo")
+  async createToDo(
+    @Body() toDoDto: toDo) {
+    return this.rabbitToDoService.send('createToDo', {...toDoDto});
+  }
+
+  @ApiOperation({summary: 'Find ToDo by userId'})
+  @ApiResponse({status: 200})
+  @Get("todo/:valueSTR")
+  async findToDoByUserId(@Param('valueSTR') valueSTR: string,){
+    const value = Number(valueSTR)
+    return this.rabbitToDoService.send('findToDoById', { value });
   }
   
 }

@@ -2,7 +2,7 @@ version: '3'
 services:
 
   rabbitmq:
-    image: rabbitmq:3.13.4-alpine
+    image: rabbitmq:3.13.4-management
     container_name: rabbitmq
     hostname: rabbitmq
     volumes:
@@ -12,8 +12,6 @@ services:
       - '15672:15672'
     env_file:
       - .env
-    networks:
-      - app
       
   auth_postgres:
     image: postgres:12
@@ -25,8 +23,6 @@ services:
       - 5432:5432
     volumes:
       - pgdataAuth:/var/lib/postgresql/data
-    networks:
-      - app
     container_name: auth_postgres
 
   api_gateway:
@@ -37,8 +33,6 @@ services:
     container_name: api_gateway
     depends_on:
       - rabbitmq
-    networks:
-      - app
     command: npm run start
 
   auth:
@@ -52,8 +46,6 @@ services:
       - rabbitmq
       - api_gateway
     restart: always
-    networks:
-      - app
     command: npm run start
 
   adminer:
@@ -64,5 +56,3 @@ services:
   
 volumes:
   pgdataAuth:
-networks:
-  app:
