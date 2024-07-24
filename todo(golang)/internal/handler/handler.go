@@ -18,8 +18,8 @@ func CreateToDo(userid int, title string, description string, storage storage.St
 	return todo, nil
 }
 
-func FindToDoById(userId int, storage storage.Storage) (*model.ToDo, error) {
-	data, err := storage.ToDo().FindByUserId(userId)
+func FindToDoById(id int, storage storage.Storage) (*model.ToDo, error) {
+	data, err := storage.ToDo().FindById(id)
 	if err != nil {
 		return nil, err
 	}

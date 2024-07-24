@@ -26,7 +26,7 @@ func (r *ToDoRepository) Create(u *model.ToDo) (*model.ToDo, error) {
 }
 
 // FindById ...
-func (r *ToDoRepository) FindByUserId(id int) (*model.ToDo, error) {
+func (r *ToDoRepository) FindById(id int) (*model.ToDo, error) {
 	u := &model.ToDo{}
 	if err := r.storage.db.QueryRow(
 		"SELECT id, userid, title, description FROM todo WHERE id = $1",
@@ -50,5 +50,5 @@ func (r *ToDoRepository) FindByUserId(id int) (*model.ToDo, error) {
 // FindAll ...
 func (r *ToDoRepository) FindAll(id int) *sql.Row {
 	return r.storage.db.QueryRow(
-		"SELECT id, userid, title, description FROM todo WHERE id = $1", id)
+		"SELECT id, userid, title, description FROM todo")
 }
