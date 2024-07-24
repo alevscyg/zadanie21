@@ -2,6 +2,6 @@
 build:
 	go build -v ./cmd/apiserver && migrate -path migrations -database "postgres://postgres:qwe@localhost/db_golang?sslmode=disable" up
 test:
-	go test -v ./...
+	go test -v -cover ./...
 
 .DEFAULT_GOAL := build
